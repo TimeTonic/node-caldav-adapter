@@ -52,6 +52,7 @@ export default function(opts: CalDavOptionsModule) {
         description: event.description,
         htmlDescription: event.htmlDescription,
         url: event.url,
+        attendees: event.attendees,
         // categories: categories,
         alarms: event.alarms,
         created: moment(event.createdOn).toDate(),
@@ -88,6 +89,7 @@ export default function(opts: CalDavOptionsModule) {
               description: r.description,
               htmlDescription: r.htmlDescription,
               url: r.url,
+              attendees: event.attendees,
               // categories: rCategories,
               alarms: r.alarms,
               created: moment(r.createdOn).toDate(),
@@ -121,6 +123,7 @@ export default function(opts: CalDavOptionsModule) {
         startDate: parsed.start ? formatted(parsed.start) : null,
         endDate: parsed.end ? formatted(parsed.end) : null,
         duration: parsed.duration ? parsed.duration.toString() : null,
+        attendee: parsed.attendee, // Timetonic
         // @ts-ignore
         timeZone: parsed.start.tz,
         createdOn: parsed.dtstamp ? formatted(parsed.dtstamp) : null,
@@ -153,6 +156,7 @@ export default function(opts: CalDavOptionsModule) {
               startDate: r.start ? formatted(r.start) : null,
               endDate: r.end ? formatted(r.end) : null,
               duration: r.duration ? r.duration.toString() : null,
+              attendee: parsed.attendee,
               // @ts-ignore
               timeZone: r.start.tz,
               createdOn: parsed.dtstamp ? formatted(parsed.dtstamp) : null,
