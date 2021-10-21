@@ -1,4 +1,5 @@
-import { AlarmData } from 'ical-generator';
+import { ParamList } from 'ical';
+import { AlarmData, AttendeeData } from 'ical-generator';
 
 export type CalDavAuthPrincipal = {
   principalId: string;
@@ -44,11 +45,13 @@ export type CalDavEvent = {
   description: string;
   htmlDescription?: string;
   url?: string;
+  attendees?: AttendeeData[];
   categories?: string[];
   alarms?: AlarmData[];
   startDate: string;
   endDate: string;
   duration?: string;
+  attendee?: string|ParamList;
   timeZone?: string;
   createdOn: string;
   lastModifiedOn: string;
