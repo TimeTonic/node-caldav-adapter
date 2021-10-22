@@ -42,6 +42,7 @@ app.use(adapter.koa({
     }
   },
   authRealm: config.authRealm,
+  regExUserPassword: /^([a-z0-9]{1,19}):([-A-Za-z0-9]{1,})$/,
   caldavRoot: 'caldav',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   logEnabled: true,
@@ -69,6 +70,10 @@ app.use(adapter.koa({
 ### authRealm
 
 * required: string Realm for Basic Authentication.
+
+### regExUserPassword
+
+* optional: regular expression to serach for user and password in url (example: https://localhost:3001/caldav/cal/user:password/mycalendar)
 
 ### caldavRoot
 

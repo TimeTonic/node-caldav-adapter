@@ -144,6 +144,7 @@ export type CalDavOptions = CalDavOptionsModule & {
   calendarRoot?: string;
   principalRoot?: string;
   disableWellKnown?: boolean;
+  regExUserPassword?: RegExp;
 };
 
 import koa from './koa';
