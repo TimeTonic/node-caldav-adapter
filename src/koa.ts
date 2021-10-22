@@ -93,7 +93,15 @@ export default function(opts: CalDavOptions) {
   };
 
   const auth = async function(ctx: CalendarContext) {
-    const creds = basicAuth(ctx);
+    let creds = undefined;
+    if (opts.regExUserPassword && ctx.state.params.principalId && ctx.state.params.principalId.match(opts.regExUserPassword)) {
+      creds = {
+        name: ctx.state.params.principalId.match(opts.regExUserPassword)[1],
+        pass: ctx.state.params.principalId.match(opts.regExUserPassword)[2],
+      };
+    } else {
+      creds = basicAuth(ctx);
+    }
     if (!creds) {
       ctx.status = 401;
       ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
