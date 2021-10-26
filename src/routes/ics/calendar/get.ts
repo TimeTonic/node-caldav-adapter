@@ -9,18 +9,17 @@ export default function(opts: CalDavOptionsModule) {
   const { buildICS } = eventBuild(opts);
   
   const exec = async function(ctx: CalendarContext, calendar: CalDavCalendar) {
-    const event = await opts.data.getEvent({
+    const events = await opts.data.getEventsForCalendar({
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,
-      eventId: ctx.state.params.eventId,
       user: ctx.state.user,
       fullData: true
     });
-    if (!event) {
-      log.debug(`event ${ctx.state.params.eventId} not found`);
+    if (!events) {
+      log.debug(`calendar ${ctx.state.params.calendarId} not found`);
       return setMissingMethod(ctx);
     }
-    return buildICS([event], calendar);
+    return buildICS(events, calendar);
   };
   
   return {

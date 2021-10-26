@@ -36,6 +36,10 @@ export const setOptions = function(ctx: CalendarContext, methods: string[]) {
   ctx.body = '';
 };
 
+export const setOkResponse = function(ctx: CalendarContext) {
+  ctx.status = 200;
+};
+
 /* https://tools.ietf.org/html/rfc4791#section-7.8.1 */
 export const setMultistatusResponse = function(ctx: CalendarContext) {
   ctx.status = 207;
