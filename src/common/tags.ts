@@ -176,7 +176,7 @@ export default function(opts) {
         doc: 'https://tools.ietf.org/html/rfc4791#section-9.6',
         resp: async ({ event, calendar }) => {
           return {
-            [buildTag(cal, 'calendar-data')]: buildICS(event, calendar)
+            [buildTag(cal, 'calendar-data')]: buildICS([event], calendar)
           };
         }
       },

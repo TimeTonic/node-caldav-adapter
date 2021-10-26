@@ -5,6 +5,7 @@ import basicAuth from 'basic-auth';
 import parseBody from './common/parseBody';
 import winston from './common/winston';
 import cal from './routes/calendar/calendar';
+import ics from './routes/ics/calendar';
 import pri from './routes/principal/principal';
 import { Request, ParameterizedContext } from 'koa';
 import { FullCalendar } from 'ical';
@@ -31,6 +32,7 @@ export interface CalendarContext extends ParameterizedContext<CalendarState> {
 const defaults = {
   caldavRoot: '/',
   calendarRoot: 'cal',
+  icsRoot: 'ics',
   principalRoot: 'p',
   logEnabled: false
 };
@@ -46,15 +48,25 @@ export default function(opts: CalDavOptions) {
 
   const rootRoute = path.join('/', opts.caldavRoot);
   const calendarRoute = path.join(rootRoute, opts.calendarRoot);
+  const icsRoute = path.join(rootRoute, opts.icsRoot);
   const principalRoute = path.join(rootRoute, opts.principalRoot, '/');
 
   const rootRegexp = pathToRegexp(path.join(rootRoute, '/:params*'));
   const calendarRegex: CalRegex = { keys: [] };
   calendarRegex.regexp = pathToRegexp(path.join(calendarRoute, '/:principalId/:calendarId?/:eventId*'), calendarRegex.keys);
+  const icsRegex: CalRegex = { keys: [] };
+  icsRegex.regexp = pathToRegexp(path.join(icsRoute, '/:principalId/:calendarId?/:eventId*'), icsRegex.keys);
   const principalRegex: CalRegex = { keys: [] };
   principalRegex.regexp = pathToRegexp(path.join(principalRoute, '/:principalId?'), principalRegex.keys);
 
   const calendarRoutes = cal({
+    logEnabled: opts.logEnabled,
+    logLevel: opts.logLevel,
+    proId: opts.proId,
+    data: opts.data
+  });
+
+  const icsRoutes = ics({
     logEnabled: opts.logEnabled,
     logLevel: opts.logLevel,
     proId: opts.proId,
@@ -74,6 +86,8 @@ export default function(opts: CalDavOptions) {
     let regex;
     if (calendarRegex.regexp.test(ctx.url)) {
       regex = calendarRegex;
+    } else if (icsRegex.regexp.test(ctx.url)) {
+      regex = icsRegex;
     } else if (principalRegex.regexp.test(ctx.url)) {
       regex = principalRegex;
     }
@@ -156,6 +170,8 @@ export default function(opts: CalDavOptions) {
 
     if (calendarRegex.regexp.test(ctx.url)) {
       await calendarRoutes(ctx);
+    } else if (icsRegex.regexp.test(ctx.url)) {
+      await icsRoutes(ctx);
     } else if (principalRegex.regexp.test(ctx.url)) {
       await principalRoutes(ctx);
     } else {

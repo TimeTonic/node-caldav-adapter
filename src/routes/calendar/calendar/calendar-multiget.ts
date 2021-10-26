@@ -30,7 +30,7 @@ export default function(opts: CalDavOptionsModule) {
       if (!event) {
         return response(href, status[404]);
       }
-      const ics = buildICS(event, calendar);
+      const ics = buildICS([event], calendar);
       return response(href, status[200], [{
         'D:getetag': event.lastModifiedOn
       }, {

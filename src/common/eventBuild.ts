@@ -38,69 +38,71 @@ const foldLines = function(input: string) {
 
 export default function(opts: CalDavOptionsModule) {
   return {
-    buildICS: function(event: CalDavEvent, calendar: CalDavCalendar) {
+    buildICS: function(calDavEvents: CalDavEvent[], calendar: CalDavCalendar) {
       // const categories = !event.categories ? null : event.categories.map((c) => {
       //   return { name: c };
       // });
-      const evt: EventData = {
-        id: event.eventId,
-        sequence: 1,
-        start: moment(event.startDate).toDate(),
-        end: moment(event.endDate).toDate(),
-        summary: event.summary,
-        location: event.location,
-        description: event.description,
-        htmlDescription: event.htmlDescription,
-        url: event.url,
-        attendees: event.attendees,
-        // categories: categories,
-        alarms: event.alarms,
-        created: moment(event.createdOn).toDate(),
-        lastModified: event.lastModifiedOn ? moment(event.createdOn).toDate() : undefined,
-        timezone: event.timeZone || calendar.timeZone,
-        // role: 'REQ-PARTICIPANT',
-        // rsvp: true
-      };
-      const recur: EventData[] = [];
-      if (event.recurring) {
-        evt.repeating = {
-          // @ts-ignore
-          freq: event.recurring.freq
+      const events: EventData[] = [];
+      for (const event of calDavEvents) {
+        const evt: EventData = {
+          id: event.eventId,
+          sequence: 1,
+          start: moment(event.startDate).toDate(),
+          end: moment(event.endDate).toDate(),
+          summary: event.summary,
+          location: event.location,
+          description: event.description,
+          htmlDescription: event.htmlDescription,
+          url: event.url,
+          attendees: event.attendees,
+          // categories: categories,
+          alarms: event.alarms,
+          created: moment(event.createdOn).toDate(),
+          lastModified: event.lastModifiedOn ? moment(event.createdOn).toDate() : undefined,
+          timezone: event.timeZone || calendar.timeZone,
+          // role: 'REQ-PARTICIPANT',
+          // rsvp: true
         };
-        if (event.recurring.until) {
-          evt.repeating.until = moment(event.recurring.until).toDate();
-        }
-        if (event.recurring.exdate?.length) {
-          evt.repeating.exclude = event.recurring.exdate.map((e) => moment(e).toDate());
-        }
-        if (event.recurring.recurrences?.length) {
-          recur.push(...event.recurring.recurrences.map((r) => {
-            // const rCategories = !r.categories ? null : r.categories.map((c) => {
-            //   return { name: c };
-            // });
-            const rEvent: EventData = {
-              id: event.eventId,
-              recurrenceId: moment(r.recurrenceId).toDate(),
-              sequence: 1,
-              start: moment(r.startDate).toDate(),
-              end: moment(r.endDate).toDate(),
-              summary: r.summary,
-              location: r.location,
-              description: r.description,
-              htmlDescription: r.htmlDescription,
-              url: r.url,
-              attendees: event.attendees,
-              // categories: rCategories,
-              alarms: r.alarms,
-              created: moment(r.createdOn).toDate(),
-              lastModified: r.lastModifiedOn ? moment(r.lastModifiedOn).toDate() : undefined,
-              timezone: r.timeZone || event.timeZone || calendar.timeZone,
-            };
-            return rEvent;
-          }));
+        events.push(evt);
+        if (event.recurring) {
+          evt.repeating = {
+            // @ts-ignore
+            freq: event.recurring.freq
+          };
+          if (event.recurring.until) {
+            evt.repeating.until = moment(event.recurring.until).toDate();
+          }
+          if (event.recurring.exdate?.length) {
+            evt.repeating.exclude = event.recurring.exdate.map((e) => moment(e).toDate());
+          }
+          if (event.recurring.recurrences?.length) {
+            events.push(...event.recurring.recurrences.map((r) => {
+              // const rCategories = !r.categories ? null : r.categories.map((c) => {
+              //   return { name: c };
+              // });
+              const rEvent: EventData = {
+                id: event.eventId,
+                recurrenceId: moment(r.recurrenceId).toDate(),
+                sequence: 1,
+                start: moment(r.startDate).toDate(),
+                end: moment(r.endDate).toDate(),
+                summary: r.summary,
+                location: r.location,
+                description: r.description,
+                htmlDescription: r.htmlDescription,
+                url: r.url,
+                attendees: event.attendees,
+                // categories: rCategories,
+                alarms: r.alarms,
+                created: moment(r.createdOn).toDate(),
+                lastModified: r.lastModifiedOn ? moment(r.lastModifiedOn).toDate() : undefined,
+                timezone: r.timeZone || event.timeZone || calendar.timeZone,
+              };
+              return rEvent;
+            }));
+          }
         }
       }
-      const events = [evt, ...recur];
       
       const cal = ical({
         domain: FIXED_DOMAIN,

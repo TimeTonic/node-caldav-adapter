@@ -143,6 +143,7 @@ export type CalDavOptions = CalDavOptionsModule & {
   caldavRoot?: string;
   calendarRoot?: string;
   principalRoot?: string;
+  icsRoot?: string;
   disableWellKnown?: boolean;
   regExUserPassword?: RegExp;
 };
