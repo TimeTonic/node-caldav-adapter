@@ -3,9 +3,21 @@ import moment from 'moment';
 import { formatted } from '../common/date';
 import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '..';
 import { CalendarComponent } from 'ical';
-import rrule from 'rrule';
+import { Frequency } from 'rrule';
 
 const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
+
+const FrequencyToText = function(frequency: Frequency) : 'SECONDLY' | 'MINUTELY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'HOURLY' {
+  switch(frequency) {
+    case Frequency.DAILY: return 'DAILY';
+    case Frequency.HOURLY: return 'HOURLY';
+    case Frequency.MINUTELY: return 'MINUTELY';
+    case Frequency.MONTHLY: return 'MONTHLY';
+    case Frequency.YEARLY: return 'YEARLY';
+    case Frequency.SECONDLY: return 'SECONDLY';
+    case Frequency.WEEKLY: return 'WEEKLY';
+  }
+};
 
 /**
  * Adapted from https://github.com/sebbo2002/ical-generator
@@ -138,7 +150,7 @@ export default function(opts: CalDavOptionsModule) {
       }
       if (parsed.rrule) {
         obj.recurring = {
-          freq: rrule.FREQUENCIES[parsed.rrule.origOptions.freq]
+          freq: FrequencyToText(parsed.rrule.origOptions.freq)
         };
         if (parsed.rrule.origOptions.until) {
           obj.recurring.until = formatted(parsed.rrule.origOptions.until);
